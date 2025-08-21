@@ -864,8 +864,6 @@ parallel::detectCores()
 
 . . .
 
-<br>
-
 ::::{.columns}
 
 ::: {.column width="50%"}
@@ -896,8 +894,7 @@ Parallel
   - Parallel versions of base R apply family
   - Parallel versions of `purrr` functions
   - Parallel versions of `foreach` loops
-- Find more details [here](https://www.futureverse.org/)
-- Find a tutorial for different use cases [here](https://henrikbengtsson.github.io/future-tutorial-user2022)
+
 
 ## A slow example
 
@@ -919,8 +916,8 @@ Before you run anything in parallel, tell R how many cores to use:
 #| label: plan-parallel
 # Load future package
 library(future)
-# Plan parallel session with 6 cores
-plan(multisession, workers = 6)
+# Plan parallel session with 5 cores
+plan(multisession, workers = 5)
 ```	
 
 ## Parallel apply functions
@@ -968,10 +965,6 @@ toc()
 :::
 
 :::
-
-. . .
-
-Use `parallel::detectCores()` to find out how many cores you have.
 
 ## Parallel apply functions
 
@@ -1043,6 +1036,7 @@ A normal for loop:
 
 ```{r}
 #| label: for-loop-slow-sqrt
+#| eval: false
 z <- list()
 for (i in 1:10) {
   z[i] <- slow_sqrt(i)
@@ -1051,10 +1045,11 @@ for (i in 1:10) {
 
 . . .
 
-Use `foreach` to write the same loop
+First, change into a `foreach`
 
 ```{r}
 #| label: foreach-slow-sqrt
+#| eval: false
 library(foreach)
 z <- foreach(i = 1:10) %do%
   {
