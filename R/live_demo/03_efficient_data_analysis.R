@@ -127,6 +127,7 @@ summarize_collapse <- function() {
 }
 
 # 4. The Arrow way
+# todo: Do I need as_data_frame?
 arrow_tbl <- arrow_table(big_data, as_data_frame = FALSE)
 summarize_arrow <- function() {
   # Convert to Arrow Table
@@ -146,3 +147,5 @@ microbenchmark(
   arrow = summarize_arrow(),
   times = 10
 )
+
+# Data table update by reference

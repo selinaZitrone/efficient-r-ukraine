@@ -555,9 +555,9 @@ for (i in 1:10) {
     "After iteration ",
     i,
     ": x is in ",
-    address(x),
+    pryr::address(x),
     "and y is in ",
-    address(y),
+    pryr::address(y),
     "\n"
   )
 }
@@ -599,35 +599,81 @@ microbenchmark(
 - Use efficient data formats
   - Text files instead of Excel files
   - Binary formats like Parquet and feather for large datasets
-  - Consider SQL for very large datasets
+  - Consider databases for very large datasets
 - Use the right packages and functions for your tasks
 
-## The packages
+## tidyverse
 
-- `tidyverse`
-- `data.table`
-- `collapse`
-- `arrow`
+- Collection of packages for data analysis (I/O, manipulation, visualization, modelling, ...)
+- Consistent syntax, works well with pipes (`|>`, `%>%`)
+- Easy and intuitive to learn
+- Often fast enough but can be slower than alternatives
+- Main data structure `tbl_df` but also databases and data.tables as backend possible
+- Universe of efficient packages build around the core tidyverse, e.g.
+  - `dbplyr` for database and `dtplyr` for data.table backends
+  - `futureverse` packages for parallelization
 
+## data.table
 
-## Read data
+- Functions for I/O, data manipulation and more
+- Popular alternative to the `tidyverse`
+- Designed for fast and memory-efficient data analysis
+- Syntax quite different from tidyverse
 
-**Example:** Read csv data on global greenhouse gas emissions (~320000 rows, 8 cols).
+## collapse
+
+> collapse is written in C and C++, with algorithms much faster than base R’s, has extremely low evaluation overheads, scales well, and excels on complex statistical tasks.
+
+- Data manipulation and statistical computing
+- Easy to integrate with existing R code
+  - works well with both `data.table` and `dplyr` workflows/data structures
+  - often prefixes functions with `f` like `fmean`, `fmutate`, `fsummarize`, ...
+
+## Arrow
+
+- Access to features of Apache Arrow C++ library
+- Functions for I/O and data manipulation
+- Access to arrow data formats like parquet, feather, etc.
+- Provide Arrow C++ backend to `dplyr`
+- Can also operate on larger-than-RAM data
+
+## Other packages :construction:
+
+Of course there are so many more packages like:
+
+:::{.nonincremental}
+
+- `polars`
+- `fst`
+- database packages
+
+:::
+
+Do you know others? Let's collect them in the chat
+
+## Read data - text and excel
+
+**Example:** Read data on global greenhouse gas emissions (~320000 rows, 8 cols).
 
 ```{r}
 #| label: warmup-reading
 #| echo: false
 file_path_csv <- here::here("data/ghg_ems_large.csv")
 file_path_xlsx <- here::here("data/ghg_ems_large.xlsx")
+file_path_parquet <- here::here("data/ghg_ems_large.parquet")
+file_path_fst <- here::here("data/ghg_ems_large.fst")
 
 dummy <- readr::read_csv(file_path_csv)
 dummy <- read.csv(file_path_csv)
 dummy <- data.table::fread(file_path_csv)
 dummy <- arrow::read_csv_arrow(file_path_csv)
+dummy <- arrow::read_parquet(file_path_parquet)
+dummy <- fst::read_fst(file_path_fst)
 rm(dummy)
 ```
 
-  
+. . .
+
 ```{r}
 #| label: benchmark-reading-data
 #| message: false
@@ -636,23 +682,29 @@ file_path_csv <- here::here("data/ghg_ems_large.csv")
 file_path_xlsx <- here::here("data/ghg_ems_large.xlsx")
 
 compare_read <- microbenchmark(
+  # base R
   read.csv = read.csv(file_path_csv),
-  read_csv = readr::read_csv(
-    file_path_csv,
-    show_col_types = FALSE
-  ),
-  fread = data.table::fread(file_path_csv, showProgress = FALSE),
-  read_csv_arrow = arrow::read_csv_arrow(file_path_csv),
+
+  # tidyverse
+  read_csv = readr::read_csv(file_path_csv, show_col_types = FALSE),
   read_excel = readxl::read_excel(file_path_xlsx),
+
+  # data.table
+  fread = data.table::fread(file_path_csv, showProgress = FALSE),
+
+  # arrow
+  read_csv_arrow = arrow::read_csv_arrow(file_path_csv),
   times = 10
 )
 
 autoplot(compare_read)
 ```
 
-## Read data
+## Read data - binary
 
 Binary file types can be faster (especially as file size increases)
+
+. . .
 
 ```{r}
 #| label: benchmark-reading-binary
@@ -661,13 +713,18 @@ file_path_parquet <- here::here("data/ghg_ems_large.parquet")
 file_path_fst <- here::here("data/ghg_ems_large.fst")
 
 compare_read_binary <- microbenchmark(
+  # tidyverse
   read_csv = readr::read_csv(file_path_csv, show_col_types = FALSE),
-  read_fread = data.table::fread(
-    file_path_csv,
-    showProgress = FALSE
-  ),
+
+  # data.table
+  read_fread = data.table::fread(file_path_csv, showProgress = FALSE),
+
+  # arrow parquet format
   read_parquet = arrow::read_parquet(file_path_parquet),
+
+  # fst format (efficient R only format)
   read_fst = fst::read_fst(file_path_fst),
+
   times = 10
 )
 
@@ -678,10 +735,18 @@ autoplot(compare_read_binary)
 
 Every corresponding read function has a write counterpart:
 
+:::{.fragement}
+
+::: {.nonincremental}
+
 - `write_csv` from the `readr` package (tidyverse)
 - `fwrite` from the `data.table` package
 - `write_csv_arrow`, `write_parquet` from the `arrow` package
 - `write_fst` from the `fst` package
+
+:::
+
+:::
 
 ## Write data
 
@@ -690,69 +755,55 @@ Every corresponding read function has a write counterpart:
 #| output-location: slide
 
 # create an example with 10000 rows to export
-df <- data.frame(
-  x = 1:100000,
-  y = 1:100000,
-  z = 1:100000
-)
+df <- data.frame(x = 1:100000, y = 1:100000, z = 1:100000)
 
 compare_output <- microbenchmark::microbenchmark(
+  # write Excel
+  write_excel = writexl::write_xlsx(df, "df.xlsx"),
+
+  # write text
   write.csv = write.csv(df, "df.csv"),
   write_csv = readr::write_csv(df, "df.csv"),
   fwrite = data.table::fwrite(df, "df.csv"),
-  write_excel = writexl::write_xlsx(df, "df.xlsx"),
   write_csv_arrow = arrow::write_csv_arrow(df, "df.csv"),
 
   # Write binary formats
-  write_parquet = arrow::write_parquet(sample_data, "data/df.parquet"),
-  write_fst = fst::write_fst(sample_data, "data/df.fst"),
+  write_parquet = arrow::write_parquet(df, "data/df.parquet"),
+  write_fst = fst::write_fst(df, "data/df.fst"),
   times = 10
 )
 
 autoplot(compare_output)
 ```
 
-## Efficient data manipulation
-
-Different packages offer fast and efficient data manipulation and analysis:
-
-- `dplyr` package has a C++ backend and is often faster than base R
-- `data.table` package is fast and memory efficiency
-  - Syntax is quite different from base R and `tidyverse`
-- `collapse` package is a C++ based and specifically developed for fast data analysis
-  - Works together with both `tidyverse` and `data.table` workflows
-  - Many functions similar to base R or `dplyr` just with prefix "f" (e.g. `fselect`, `fmean`, ...)
-- `arrow` package for efficient reading, processing and writing of large datasets (even larger than RAM)
-
-## Summarize data by group
+## Data manipulation
 
 **Example**: Summarize mean carbon emissions from Electricity by Country
+
+<br>
 
 ```{r}
 #| label: setup-summarize-by-group
+#| message: false
 library(data.table)
 library(dplyr)
 library(collapse)
+library(arrow)
+
+# Use the right data formats
+ghg_ems <- readr::read_csv(file_path_csv)
+ghg_emsDT <- setDT(ghg_ems) # to data table
+arrow_tbl <- arrow_table(ghg_ems) # to arrow table
 ```
 
 ## Summarize data by group
 
-**Example**: Summarize mean carbon emissions from Electricity by Country
-
-```{r}
-#| label: load-ghg-ems
-#| include: false
-ghg_ems <- data.table::fread(here::here("data/ghg_ems.csv"))
-```
-
 ```{r}
 #| label: functions-summarize-by-group
-#| code-line-numbers: 1-7|8-13|14-20
+#| code-line-numbers: 1-4|6-11|13-18|20-26
 # 1. The data table way
-# Convert the data to a data.table
-setDT(ghg_ems)
 summarize_dt <- function() {
-  ghg_ems[, mean(Electricity, na.rm = TRUE), by = Country]
+  ghg_emsDT[, mean(Electricity, na.rm = TRUE), by = Country]
 }
 
 # 2. The dplyr way
@@ -768,6 +819,14 @@ summarize_collapse <- function() {
     fgroup_by(Country) |>
     fsummarise(mean_e = fmean(Electricity))
 }
+
+# 4. The arrow way
+summarize_arrow <- function() {
+  arrow_tbl |>
+    group_by(Country) |>
+    summarize(mean_e = mean(Electricity, na.rm = TRUE)) |>
+    collect() # result is only collected on request
+}
 ```
 
 ## Efficient data manipulation
@@ -781,22 +840,7 @@ microbenchmark(
   dplyr = summarize_dplyr(),
   data_table = summarize_dt(),
   collapse = summarize_collapse(),
-  times = 10
-)
-```
-
-## Select columns
-
-**Example**: Select columns Country, Year, Electricity, Transportation
-
-```{r}
-#| label: benchmark-selecting-columns
-#| code-line-numbers: 1-6|7-11
-#| output-location: fragment
-microbenchmark(
-  dplyr = select(ghg_ems, Country, Year, Electricity, Transportation),
-  data_table = ghg_ems[, .(Country, Electricity, Transportation)],
-  collapse = fselect(ghg_ems, Country, Electricity, Transportation),
+  arrow = summarize_arrow(),
   times = 10
 )
 ```
