@@ -1,6 +1,6 @@
 ---
 title: "Efficient R"
-subtitle: "Workshop for :ukraine:"
+subtitle: "Workshop for Ukraine"
 author: "Selina Baldauf"
 format: 
   revealjs:
@@ -36,14 +36,23 @@ ggplot2::theme_set(ggplot2::theme_gray(base_size = 16))
 library(tictoc)
 ```
 
-## Welcome
+## Welcome :construction:
 
-- Selina Baldauf
+::: {.columns}
+
+::: {.column}
+
+- Background in Ecology/Theoretical Ecology
 - Scientific programmer at the Freie Universität Berlin
-  - Theoretical ecology 
-  - My background: PhD in ecology, more and more interested in programming
-  - Besides doing some research myself 
-- Reach out via email or bluesky
+- Research + Coding + Teaching
+- Reach out via email or Bluesky
+:::
+::: {.column}
+
+![](img/selina_cropped.jpg){width=50% fig-align="center"}
+
+:::
+:::
 
 ## What is efficiency?
 
@@ -111,9 +120,7 @@ $$
 
 **Principles** and **tools** to make R programming more efficient for the :computer:
 
-## Today
-
-Focus on speed, not memory.
+## Today :construction:
 
 - How to **measure speed** of your code
 - **Basics** of efficient R programming
@@ -121,6 +128,11 @@ Focus on speed, not memory.
 - Advanced optimization
   - **Parallelization**
   - Integrating **C++**
+
+. . .
+
+:package: Material (Slides and Code) on Github<br>
+:question: Question - just ask in the Chat or unmute yourself!
 
 ## Is R slow?
 
@@ -141,13 +153,14 @@ Focus on speed, not memory.
 
 . . .
 <br>
+
 #### Think about
 
 - How much time do I **save** vs. **spend** optimizing? 
 - **How often** do I run the code?
 - Trade-offs between **readability** and **efficiency**
 
-## Should I optimize? {visibility="hidden"}
+## Should I optimize?
 
 If your code is too slow for you, you can go through these steps:
 
@@ -155,41 +168,24 @@ If your code is too slow for you, you can go through these steps:
 
 ## Run the code somewhere else
 
-Useful if the you are blocked from doing other things at the same time:
+- Run it on a cluster
+- Run your script in the background
 
 :::{.fragment}
 
-:::{.nonincremental}
-
-- Use RStudio **background jobs**
+Use RStudio **background jobs**
 
 ![](img/background_job.png){width=40%}
 
 :::
 
-:::
-
 :::{.fragment}
 
-:::{.nonincremental}
-
-- Start your R script from the command line
-
-:::
+Start your R script from the command line
 
 ```bash
 Rscript my_script.R
 ```
-:::
-
-:::{.fragment}
-
-:::{.nonincremental}
-
-- Run it on a cluster
-
-:::
-
 :::
 
 ## Should I optimize?
@@ -202,10 +198,10 @@ If your code is to slow for you, you can go through these steps:
 
 :::
 
-1. **Identify bottlenecks** (i.e. slow parts) of your code
-2. **Optimize** only those bottlenecks
+2. **Identify bottlenecks** (i.e. slow parts) of your code
+3. **Optimize** only those bottlenecks
 
-# Profiling and benchmarking
+# Profiling and benchmarking {.inverse}
 
 > Measure the speed and memory usage of your code
 
@@ -293,7 +289,7 @@ center_data_slow <- function() {
   # Subtract means
   for (i in seq_along(means)) {
     df[, i] <- df[, i] - means[i]
-    # Simulate inefficiency by sleeping for 0.01 seconds
+    # Simulate inefficiency by sleeping 0.01 seconds
     Sys.sleep(0.01)
   }
   return(df)
@@ -389,7 +385,7 @@ library(ggplot2)
 autoplot(runtime_comp)
 ```
 
-# Optimize your code
+# Optimize your R code{.inverse}
 
 :::{.nonincremental}
 
@@ -415,10 +411,10 @@ Some examples of base-R vectorized functions:
 
 :::{.nonincremental}
 
-- Arithmetic & Math: `+`, `-`, `*`, `/`, `log()`, `exp()`, `sqrt()`, `mean()`, `sd()`, `rowSums()`, `colMeans()`
-- Logical & Comparison: `<`, `>`, `==`, `!=`, `&`, `|`, `all()`, `any()`, `%in%`
-- Data Manipulation: `[`, `ifelse()`, `cut()`, `cumsum()`, `which()`, `match()`, `order()`
-- String operations: `paste()`, `paste0()`, `grep()`, `gsub()` 
+- **Arithmetic & Math**: `+`, `-`, `*`, `/`, `log()`, `exp()`, `sqrt()`, `mean()`, `sd()`, `rowSums()`, `colMeans()`
+- **Logical & Comparison**: `<`, `>`, `==`, `!=`, `&`, `|`, `all()`, `any()`, `%in%`
+- **Data Manipulation**: `[`, `ifelse()`, `cut()`, `cumsum()`, `which()`, `match()`, `order()`
+- **String operations**: `paste()`, `paste0()`, `grep()`, `gsub()` 
 :::
 
 ## Vectorize your code
@@ -550,7 +546,7 @@ for (i in 1:10) {
   x[i] <- i
   y[i] <- i
 
-  # Force a print of the current memory location after each assignment
+  # Print current memory location after each assignment
   cat(
     "After iteration ",
     i,
@@ -604,38 +600,71 @@ microbenchmark(
 
 ## tidyverse
 
-- Collection of packages for data analysis (I/O, manipulation, visualization, modelling, ...)
+::: {.columns}
+::: {.column width=70%}
+- Collection of packages for data analysis
 - Consistent syntax, works well with pipes (`|>`, `%>%`)
-- Easy and intuitive to learn
-- Often fast enough but can be slower than alternatives
-- Main data structure `tbl_df` but also databases and data.tables as backend possible
+- Main data structure `tbl_df` 
 - Universe of efficient packages build around the core tidyverse, e.g.
   - `dbplyr` for database and `dtplyr` for data.table backends
   - `futureverse` packages for parallelization
+- Often fast enough but can be slower than alternatives
+
+:::
+::: {.column width=30%}
+![](img/stickr/tidyverse.png)
+:::
+::: 
+
 
 ## data.table
 
+::: {.columns}
+::: {.column width=70%}
 - Functions for I/O, data manipulation and more
 - Popular alternative to the `tidyverse`
 - Designed for fast and memory-efficient data analysis
 - Syntax quite different from tidyverse
+:::
+::: {.column width=30%}
+
+![](img/stickr/datatable.png)
+:::
+:::
+
 
 ## collapse
 
+::: {.columns}
+::: {.column width=70%}
 > collapse is written in C and C++, with algorithms much faster than base R’s, has extremely low evaluation overheads, scales well, and excels on complex statistical tasks.
 
 - Data manipulation and statistical computing
 - Easy to integrate with existing R code
   - works well with both `data.table` and `dplyr` workflows/data structures
   - often prefixes functions with `f` like `fmean`, `fmutate`, `fsummarize`, ...
+:::
+::: {.column width=30%}
+![](img/stickr/collapse.png)
+:::
+:::
+
 
 ## Arrow
 
+::: {.columns}
+::: {.column width=70%}
 - Access to features of Apache Arrow C++ library
 - Functions for I/O and data manipulation
 - Access to arrow data formats like parquet, feather, etc.
-- Provide Arrow C++ backend to `dplyr`
 - Can also operate on larger-than-RAM data
+- Provide Arrow C++ backend to `dplyr`
+:::
+::: {.column width=30%}
+![](img/stickr/arrow.png)
+
+:::
+:::
 
 ## Other packages :construction:
 
@@ -643,13 +672,17 @@ Of course there are so many more packages like:
 
 :::{.nonincremental}
 
-- `polars`
-- `fst`
-- database packages
+- [`polars`](https://pola-rs.github.io/r-polars/): Fast DataFrame library implemented in Rust
+- [`fst`](https://www.fstpackage.org/): Fast and efficient data format with high read/write speed
+- ...
 
 :::
 
 Do you know others? Let's collect them in the chat
+
+. . .
+
+Check the resources section of the README for all links.
 
 ## Read data - text and excel
 
@@ -658,10 +691,10 @@ Do you know others? Let's collect them in the chat
 ```{r}
 #| label: warmup-reading
 #| echo: false
-file_path_csv <- here::here("data/ghg_ems_large.csv")
-file_path_xlsx <- here::here("data/ghg_ems_large.xlsx")
-file_path_parquet <- here::here("data/ghg_ems_large.parquet")
-file_path_fst <- here::here("data/ghg_ems_large.fst")
+file_path_csv <- here::here("data/ghg_ems.csv")
+file_path_xlsx <- here::here("data/ghg_ems.xlsx")
+file_path_parquet <- here::here("data/ghg_ems.parquet")
+file_path_fst <- here::here("data/ghg_ems.fst")
 
 dummy <- readr::read_csv(file_path_csv)
 dummy <- read.csv(file_path_csv)
@@ -678,8 +711,8 @@ rm(dummy)
 #| label: benchmark-reading-data
 #| message: false
 #| output-location: slide
-file_path_csv <- here::here("data/ghg_ems_large.csv")
-file_path_xlsx <- here::here("data/ghg_ems_large.xlsx")
+file_path_csv <- here::here("data/ghg_ems.csv")
+file_path_xlsx <- here::here("data/ghg_ems.xlsx")
 
 compare_read <- microbenchmark(
   # base R
@@ -709,8 +742,8 @@ Binary file types can be faster (especially as file size increases)
 ```{r}
 #| label: benchmark-reading-binary
 #| output-location: slide
-file_path_parquet <- here::here("data/ghg_ems_large.parquet")
-file_path_fst <- here::here("data/ghg_ems_large.fst")
+file_path_parquet <- here::here("data/ghg_ems.parquet")
+file_path_fst <- here::here("data/ghg_ems.fst")
 
 compare_read_binary <- microbenchmark(
   # tidyverse
@@ -836,16 +869,18 @@ summarize_arrow <- function() {
 ```{r}
 #| label: benchmark-summarizing-by-group
 # compare the speed of all versions
-microbenchmark(
+compare_summarize <- microbenchmark(
   dplyr = summarize_dplyr(),
   data_table = summarize_dt(),
   collapse = summarize_collapse(),
   arrow = summarize_arrow(),
   times = 10
 )
+
+summary(compare_summarize, unit = "relative")
 ```
 
-# Advanced optimization
+# Advanced optimization {.inverse}
 
 > Parallelization and C++
 
@@ -1162,7 +1197,7 @@ plan(sequential)
 - Use the [`Rcpp` package](https://www.rcpp.org/) to re-write R functions in C++
  - `Rcpp` is also used internally by many R packages to make them faster
 - Requirements: 
-  - C++ compiler installed
+  - Install C++ compiler (Rtools for Windows, Xcode for Mac, gcc for Linux, see [here](https://teuder.github.io/rcpp4everyone_en/020_install.html#install-c-compiler) for instructions)
   - Some knowledge of C++
   
 - See [this book chapter](https://csgillespie.github.io/efficientR/performance.html#rcpp) and the [online documentation](https://www.rcpp.org/) for more info
@@ -1259,50 +1294,34 @@ fibonacci_cpp(30)
 
 ```{r}
 #| label: benchmark-fibonacci
-microbenchmark(
+compare_rcpp <- microbenchmark(
   r = fibonacci_r(30),
   rcpp = fibonacci_cpp(30),
   times = 10
 )
+
+summary(compare_rcpp, unit = "relative")
 ```
 
-# Summary
+# Summary {.inverse}
 
-## Efficient R code and optimization
+## Efficient R code and optimization :construction:
 
-:::{.nonincremental}
+- Find bottlenecks and optimize those
+- Many quick wins, e.g.
+  - Use `fread` instead of `read.csv`
+  - Use `future_apply/future_map` instead of `apply/map`
+  - Replace some tidyverse functions with collapse functions
 
-- First: Can I run it somewhere else?
-  - :wrench: Background job or cluster
-- If not: Find bottlenecks in your code
-  - :wrench: `profvis` package for profiling
-  - :wrench: `microbenchmark` package for benchmarking
-- Make the critical sections more efficient
-
-:::
-
-# Summary
-
+## Summary
 
 ![](img/pyramid_text.png){width=90%}
 
 
-## Next lecture
-
-#### Topic t.b.a.
-
-<br>
-
-:date: 17th July :clock4: 4-5 p.m. :round_pushpin: Webex
-
-:bell: [Subscribe to the mailing list](https://lists.fu-berlin.de/listinfo/toolsAndTips)
-
-:e-mail: For topic suggestions and/or feedback [send me an email](mailto:selina.baldauf@fu-berlin.de)
-
 ## Thank you for your attention :)
 Questions?
 
-# Appendix
+# 6Appendix
 
 ## Cache function results
 
