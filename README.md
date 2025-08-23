@@ -34,8 +34,7 @@ you want to try out the examples, you can prepare by following these steps:
 install.packages(c("tictoc", "microbenchmark", "profvis"))
 
 # Data manipulation and I/O
-install.packages(c("tidyverse", "data.table", "collapse"))
-install.packages(c("readxl", "writexl", "arrow", "fst"))
+install.packages(c("tidyverse", "data.table", "collapse", "arrow", "fst"))
 
 # Parallelization
 install.packages(c("future", "future.apply", "doFuture", "foreach", "furrr"))
@@ -74,8 +73,7 @@ To run the example scripts, you'll need to install several R packages. You can i
 install.packages(c("tictoc", "microbenchmark", "profvis"))
 
 # Data manipulation and I/O
-install.packages(c("tidyverse", "data.table", "collapse"))
-install.packages(c("readxl", "writexl", "arrow", "fst"))
+install.packages(c("tidyverse", "data.table", "collapse", "arrow", "fst"))
 
 # Parallelization
 install.packages(c("future", "future.apply", "doFuture", "foreach", "furrr"))
