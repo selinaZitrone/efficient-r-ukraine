@@ -925,10 +925,19 @@ Parallel
 
 ## Parallelization with the futureverse
 
+::: {.columns}
+::: {.column width=70%}
 - `future` is a framework to help you parallelize existing R code
   - Parallel versions of base R apply family
   - Parallel versions of `purrr` functions
   - Parallel versions of `foreach` loops
+
+:::
+::: {.column width=30%}
+![](img/stickr/future.png)
+:::
+::: 
+
 
 
 ## A slow example
