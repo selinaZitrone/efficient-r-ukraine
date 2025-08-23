@@ -787,8 +787,8 @@ Every corresponding read function has a write counterpart:
 #| label: benchmark-writing-data
 #| output-location: slide
 
-# create an example with 10000 rows to export
-df <- data.frame(x = 1:100000, y = 1:100000, z = 1:100000)
+# create an example with 1000000 rows to export
+df <- data.frame(x = 1:1000000, y = 1:1000000, z = 1:1000000)
 
 compare_output <- microbenchmark::microbenchmark(
   # write Excel
@@ -800,7 +800,7 @@ compare_output <- microbenchmark::microbenchmark(
   fwrite = data.table::fwrite(df, "df.csv"),
   write_csv_arrow = arrow::write_csv_arrow(df, "df.csv"),
 
-  # Write binary formats
+  # write binary formats
   write_parquet = arrow::write_parquet(df, "data/df.parquet"),
   write_fst = fst::write_fst(df, "data/df.fst"),
   times = 10
@@ -825,8 +825,8 @@ library(arrow)
 
 # Use the right data formats
 ghg_ems <- readr::read_csv(file_path_csv)
-ghg_emsDT <- setDT(ghg_ems) # to data table
-arrow_tbl <- arrow_table(ghg_ems) # to arrow table
+ghg_ems_dt <- setDT(ghg_ems) # to data table
+ghg_ems_parquet <- read_parquet(file_path_parquet, as_data_frame = FALSE)
 ```
 
 ## Summarize data by group
@@ -836,7 +836,7 @@ arrow_tbl <- arrow_table(ghg_ems) # to arrow table
 #| code-line-numbers: 1-4|6-11|13-18|20-26
 # 1. The data table way
 summarize_dt <- function() {
-  ghg_emsDT[, mean(Electricity, na.rm = TRUE), by = Country]
+  ghg_ems_dt[, mean(Electricity, na.rm = TRUE), by = Country]
 }
 
 # 2. The dplyr way
@@ -855,7 +855,7 @@ summarize_collapse <- function() {
 
 # 4. The arrow way
 summarize_arrow <- function() {
-  arrow_tbl |>
+  ghg_ems_parquet |>
     group_by(Country) |>
     summarize(mean_e = mean(Electricity, na.rm = TRUE)) |>
     collect() # result is only collected on request
