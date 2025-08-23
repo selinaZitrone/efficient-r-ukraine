@@ -1,8 +1,10 @@
-# ===== USING RCPP FOR PERFORMANCE =====
-# This script demonstrates how to use Rcpp to speed up R code
+# Load packages
+library(Rcpp) # For C++ integration in R
+library(microbenchmark) # For benchmarking code performance
 
-# ===== 1. INLINE C++ WITH CPPFUNCTION =====
-# R version of Fibonacci
+# 1 Inline C++ with cppFunction -----------------------------------------------
+
+# Define R version of Fibonacci
 fibonacci_r <- function(n) {
   if (n < 2) {
     return(n)
@@ -12,7 +14,6 @@ fibonacci_r <- function(n) {
 }
 
 # C++ version using Rcpp
-library(Rcpp)
 fibonacci_cpp <- cppFunction(
   "int fibonacci_cpp(int n){
     if (n < 2){
@@ -24,14 +25,15 @@ fibonacci_cpp <- cppFunction(
 )
 
 # Compare performance
-library(microbenchmark)
-microbenchmark(
+compare_cpp_function <- microbenchmark(
   r = fibonacci_r(30),
   rcpp = fibonacci_cpp(30),
   times = 10
 )
 
-# ===== 2. EXTERNAL C++ FILE =====
+summary(compare_cpp_function, unit = "relative")
+
+# 2 External C++ file ---------------------------------------------------------
 # Source the external C++ file with our Fibonacci implementation
 sourceCpp("R/live_demo/fibonacci.cpp")
 

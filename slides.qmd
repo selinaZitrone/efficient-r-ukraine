@@ -905,7 +905,7 @@ parallel::detectCores()
 
 Sequential
 
-![](img/sequential.png){width="40%" fig-align="center"}
+![](img/sequential.png){width="30%" fig-align="center"}
 
 :::
 
