@@ -13,3 +13,5 @@ img/images.pptx
 
 # dummy files created
 df.*
+data/dummy_df.*
+big_df.*
