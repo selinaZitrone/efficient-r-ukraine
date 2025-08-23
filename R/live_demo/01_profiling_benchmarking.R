@@ -1,12 +1,11 @@
 # Profiling R code ----------------------------------------------------------
 # Finding bottlenecks in the code
 
-# Example: Centering data
-
 # install.packages("profvis")
 
 library(profvis)
 
+# Example: Centering data around its mean
 profvis({
   # Create a data frame with 150 columns and 200000 rows
   df <- as.data.frame(matrix(rnorm(150 * 200000), nrow = 200000))
@@ -23,7 +22,7 @@ profvis({
 })
 
 # Benchmarking R code -------------------------------------------------------
-# Measure runtime
+# Measuring runtime
 
 # Define some functions to compare
 
@@ -44,7 +43,7 @@ center_data_slow <- function() {
   return(df)
 }
 
-# Remove the Sys.sleep
+# More efficient version
 center_data_fast <- function() {
   # Create a data frame with 150 columns and 100000 rows
   df <- matrix(rnorm(150 * 100000), nrow = 100000)
@@ -59,7 +58,7 @@ center_data_fast <- function() {
   return(df)
 }
 
-# Using tictoc or system.time for quick measurements ---------------------------
+# Option 1: Quick benchmarking -------------------------------------------------
 
 system.time(center_data_slow())
 system.time(center_data_fast())
@@ -74,7 +73,7 @@ tic()
 fast_data <- center_data_fast()
 toc()
 
-# Using microbenchmark ---------------------------------------------------------
+# Option 2: Using microbenchmark -----------------------------------------------
 
 library(microbenchmark)
 
@@ -84,6 +83,9 @@ runtime_comp <- microbenchmark(
   fast = center_data_fast(),
   times = 10 # the default is 100 but we are impatient
 )
+
+# Look at absolute runtimes
+runtime_comp
 
 # Get a relative comparison
 summary(runtime_comp, unit = "relative")
