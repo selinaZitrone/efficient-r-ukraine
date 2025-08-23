@@ -9,7 +9,7 @@ y <- 1:1e6
 
 microbenchmark(
   for_loop = {
-    result <- numeric(length(x))
+    result <- numeric()
     for (i in seq_along(x)) {
       result[i] <- x[i] * 2 + y[i] / 2
     }
@@ -19,11 +19,11 @@ microbenchmark(
 )
 
 # Example 2: Calculating cumulative values
-x <- sample(1:100, 1e5, replace = TRUE)
+x <- sample(1:100, 1e6, replace = TRUE)
 
 microbenchmark(
   for_loop = {
-    result <- numeric(length(x))
+    result <- numeric()
     sum_so_far <- 0
     for (i in seq_along(x)) {
       sum_so_far <- sum_so_far + x[i]
@@ -47,7 +47,7 @@ f1 <- function() {
 
 # Fill up data frame in a loop but pre-allocate it
 f2 <- function() {
-  x <- numeric(1e4)
+  x <- numeric(1e6)
   for (i in 1:1e6) {
     x[i] <- i
   }
@@ -75,9 +75,9 @@ for (i in 1:10) {
     "After iteration ",
     i,
     ": x is in ",
-    address(x),
+    pryr::address(x),
     "and y is in ",
-    address(y),
+    pryr::address(y),
     "\n"
   )
 }
