@@ -1,7 +1,8 @@
 ---
 title: "Efficient R"
-subtitle: "Workshop for Ukraine"
 author: "Selina Baldauf"
+title-slide-attributes: 
+  data-background-image: img/grassland5.JPG
 format: 
   revealjs:
     footer: "Selina Baldauf // Efficient R"
@@ -36,22 +37,45 @@ ggplot2::theme_set(ggplot2::theme_gray(base_size = 16))
 library(tictoc)
 ```
 
-## Welcome :construction:
+## Efficient R {.slide-title background-image="img/grassland5.JPG"}
+
+:::{.text-big}
+
+Selina Baldauf
+
+:::
+
+
+:::{.text-small}
+
+{{< fa envelope >}} selina.baldauf@fu-berlin.de &nbsp;&nbsp; {{< fa brands bluesky >}} @selina-b
+
+:::
+
+:::{.bottom-right-foto}
+Foto: Illya Chorney
+:::
+
+
+## Welcome {background-image="img/grassland5.JPG"}
 
 ::: {.columns}
 
-::: {.column}
+::: {.column width="80%"}
 
-- Background in Ecology/Theoretical Ecology
-- Scientific programmer at the Freie Universität Berlin
+- Ecology/Theoretical Ecology
+- Scientific programmer at Freie Universität Berlin
 - Research + Coding + Teaching
-- Reach out via email or Bluesky
 :::
-::: {.column}
+::: {.column width = "20%"}
 
-![](img/selina_cropped.jpg){width=50% fig-align="center"}
+![](img/selina_cropped.jpg){fig-align="right"}
 
 :::
+:::
+
+:::{.bottom-right-foto}
+Foto: Illya Chorney
 :::
 
 ## What is efficiency?
@@ -120,7 +144,7 @@ $$
 
 **Principles** and **tools** to make R programming more efficient for the :computer:
 
-## Today :construction:
+## Today
 
 - How to **measure speed** of your code
 - **Basics** of efficient R programming
@@ -131,7 +155,10 @@ $$
 
 . . .
 
-:package: Material (Slides and Code) on Github<br>
+:package: Material (Slides, Code, References & Resources) on [Github](https://github.com/selinaZitrone/efficient-r-ukraine)<br>
+
+. . .
+
 :question: Question - just ask in the Chat or unmute yourself!
 
 ## Is R slow?
@@ -152,6 +179,7 @@ $$
 (Hadley Wickham in [Advanced R](https://adv-r.hadley.nz/perf-improve.html))
 
 . . .
+
 <br>
 
 #### Think about
@@ -160,46 +188,13 @@ $$
 - **How often** do I run the code?
 - Trade-offs between **readability** and **efficiency**
 
-## Should I optimize?
+## How to optimize
 
-If your code is too slow for you, you can go through these steps:
+Don't optimize from top to bottom!
 
-1. Can you just **run the code somewhere else**?
+1. **Identify bottlenecks** (i.e. slow parts) of your code
 
-## Run the code somewhere else
-
-- Run it on a cluster
-- Run your script in the background
-
-:::{.fragment}
-
-Use RStudio **background jobs**
-
-![](img/background_job.png){width=40%}
-
-:::
-
-:::{.fragment}
-
-Start your R script from the command line
-
-```bash
-Rscript my_script.R
-```
-:::
-
-## Should I optimize?
-
-If your code is to slow for you, you can go through these steps:
-
-:::{.nonincremental}
-
-1. Can you just **run the code somewhere else**?
-
-:::
-
-2. **Identify bottlenecks** (i.e. slow parts) of your code
-3. **Optimize** only those bottlenecks
+2. **Optimize** only those bottlenecks
 
 # Profiling and benchmarking {.inverse}
 
@@ -281,7 +276,9 @@ Which version of the code is faster?
 #| label: define-center_data_slow
 center_data_slow <- function() {
   # Create data with 150 columns and 100000 rows
-  df <- as.data.frame(matrix(rnorm(150 * 100000), nrow = 100000))
+  df <- as.data.frame(
+    matrix(rnorm(150 * 100000), nrow = 100000)
+  )
 
   # Calculate mean of each column
   means <- apply(df, 2, mean)
@@ -323,15 +320,6 @@ center_data_fast <- function() {
 :::
 
 ## Benchmarking R code - the easy way
-
-Use the `system.time()` function for simple function calls:
-
-```{r}
-system.time(center_data_slow())
-system.time(center_data_fast())
-```
-
-. . .
 
 Use the `tictoc` package also for longer code sections:
 
@@ -598,7 +586,7 @@ microbenchmark(
   - Consider databases for very large datasets
 - Use the right packages and functions for your tasks
 
-## tidyverse
+## [tidyverse](https://www.tidyverse.org/)
 
 ::: {.columns}
 ::: {.column width=70%}
@@ -617,14 +605,25 @@ microbenchmark(
 ::: 
 
 
-## data.table
+## [data.table](https://rdatatable.gitlab.io/data.table/)
 
 ::: {.columns}
 ::: {.column width=70%}
 - Functions for I/O, data manipulation and more
 - Popular alternative to the `tidyverse`
 - Designed for fast and memory-efficient data analysis
-- Syntax quite different from tidyverse
+- Syntax quite different from tidyverse:
+
+:::{.fragment}
+
+```
+dt[i, j, by]
+```
+
+**Take** data.table `dt`, **subset rows** using `i` and **manipulate columns** with `j`, **grouped** according to `by`.
+
+:::
+
 :::
 ::: {.column width=30%}
 
@@ -633,7 +632,7 @@ microbenchmark(
 :::
 
 
-## collapse
+## [collapse](https://sebkrantz.github.io/collapse/)
 
 ::: {.columns}
 ::: {.column width=70%}
@@ -650,13 +649,13 @@ microbenchmark(
 :::
 
 
-## Arrow
+## [Arrow](https://arrow.apache.org/docs/r/)
 
 ::: {.columns}
 ::: {.column width=70%}
 - Access to features of Apache Arrow C++ library
 - Functions for I/O and data manipulation
-- Access to arrow data formats like parquet, feather, etc.
+- Access to efficient binary data formats like parquet, feather, etc.
 - Can also operate on larger-than-RAM data
 - Provide Arrow C++ backend to `dplyr`
 :::
@@ -666,7 +665,7 @@ microbenchmark(
 :::
 :::
 
-## Other packages :construction:
+## Other packages
 
 Of course there are so many more packages like:
 
@@ -674,6 +673,7 @@ Of course there are so many more packages like:
 
 - [`polars`](https://pola-rs.github.io/r-polars/): Fast DataFrame library implemented in Rust
 - [`fst`](https://www.fstpackage.org/): Fast and efficient data format with high read/write speed
+- [`memoise`](https://memoise.r-lib.org/): Cache function calls
 - ...
 
 :::
@@ -681,6 +681,8 @@ Of course there are so many more packages like:
 Do you know others? Let's collect them in the chat
 
 . . .
+
+<br>
 
 Check the resources section of the README for all links.
 
@@ -1314,23 +1316,28 @@ summary(compare_rcpp, unit = "relative")
 
 # Summary {.inverse}
 
-## Efficient R code and optimization :construction:
+## Efficient R code and optimization
 
-- Find bottlenecks and optimize those
+- Find your code bottlenecks and optimize those
+  - Use `profvis`, `microbenchmark`, and `tictoc`
 - Many quick wins, e.g.
   - Use `fread` instead of `read.csv`
   - Use `future_apply/future_map` instead of `apply/map`
-  - Replace some tidyverse functions with collapse functions
+  - Replace some tidyverse/base R functions with collapse functions
+- If necessary: Advanced optimization techniques (e.g. C++ integration)
+- For memory bottlenecks: 
+  - Consider data bases together with `dbplyr`
+  - Use `arrow` to work on larger-than-RAM datasets
 
 ## Summary
 
 ![](img/pyramid_text.png){width=90%}
 
 
-## Thank you for your attention :)
+## Thank you for your attention {background-image="img/grassland5.JPG"}
 Questions?
 
-# 6Appendix
+# Appendix
 
 ## Cache function results
 
@@ -1378,4 +1385,25 @@ result <- microbenchmark(
 )
 
 autoplot(result)
+```
+
+## Run the code somewhere else
+
+- Run it on a cluster
+- Run your script in the background
+
+:::{.fragment}
+
+Use RStudio **background jobs**
+
+![](img/background_job.png){width=40%}
+
+:::
+
+:::{.fragment}
+
+Start your R script from the command line
+
+```bash
+Rscript my_script.R
 ```

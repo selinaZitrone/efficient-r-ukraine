@@ -35,13 +35,14 @@ $h3-font-size: 1.15em !default;
 
 //code
 $code-color: $theme-purple-light !default;
-  $font-family-monospace: 'Inconsolata', monospace  !default;
+$font-family-monospace: 'Inconsolata', monospace  !default;
 
 // general  
 $body-bg: $theme-white;
-  $body-color: $theme-black;
-  $link-color: $theme-purple-light;
-  $presentation-font-size-root: 35px;
+$body-color: $theme-black;
+$link-color: $theme-purple-light;
+$presentation-font-size-root: 35px;
+
 
 /*-- scss:rules --*/
 
@@ -54,23 +55,80 @@ $body-bg: $theme-white;
 }
 
 
-  .reveal pre code {
-    background-color: #f8f8f8;
-      font-size: 1em;
-    padding: 0.5em;
-    line-height: 1.2em;
-  }
+.reveal pre code {
+  background-color: #f8f8f8;
+  font-size: 1em;
+  padding: 0.5em;
+  line-height: 1.2em;
+}
 
-.subtitle {
-  color: $theme-purple-light;
-  font-size: $h2-font-size;
+
+.quarto-title-block {
+  /* Add a semi-transparent white background */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 20%;           /* Increased from 20% to 30% to move it down */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;         /* Reduced width */
+    height: auto;
+    min-height: 30%;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    z-index: -1;
+    padding: 1em;
+  }
+  color: $theme-purple-light !important;
+  font-size: 2.5em !important;
   font-family: $presentation-heading-font;
 }
 
-.author {
-  color: $body-bg;
-  font-size: $h2-font-size;
-  font-family: $presentation-heading-font;
+
+
+.slide-title{
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  
+  /* Add a semi-transparent white background */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 25%;           /* Reduced from 30% to 25% to move it higher */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;         /* Width of the background */
+    height: auto;
+    min-height: 38%;    /* Reduced from 40% to 30% to make it less high */
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    z-index: -1;
+    padding: 1em;     /* Reduced padding slightly */
+  }
+  
+  /* Position elements relative to the white background */
+  h2, h3, p {
+    position: relative; /* Ensure text is positioned above the background */
+    z-index: 1;         /* Make sure content appears above the background */
+    margin: 0 auto;     /* Center text horizontally */
+    max-width: 80%;     /* Ensure text doesn't overflow the background */
+  }
+  
+  h2 {
+    color: $theme-purple;
+    font-size: 3.5em;
+    margin-bottom: 0.2em;
+    padding-top: 0.3em; /* Reduced padding at the top */
+  }
+  
+  h3 {
+    color: $theme-purple;
+    margin-bottom: 0.8em; /* Reduced bottom margin */
+  }
 }
 
 .footer {
@@ -135,7 +193,7 @@ section.has-dark-background a, section.has-dark-background a:hover {
     color: $theme-purple-lighter;
   }
   .slide-background-content {
-    background-color: $theme-black;
+    background-color: $gray-800;
   }
   blockquote {
     color: $gray-200
@@ -247,4 +305,22 @@ margin: 0;
 position: absolute;
 top: -4px;
 right: 12px;
+}
+
+.reveal div .bottom-right-foto {
+  p {
+    color: $theme-pink-light;
+    margin: 0;
+    font-size: 0.7em; // Small text
+    white-space: nowrap; // Prevent text from wrapping
+  }
+  margin: 0;
+  position: absolute;
+  bottom: 30px; // Keeps space above slide number
+  left: 90%; // Centers horizontally at 50%
+  transform: translateX(-50%); // Centers the element itself
+  text-align: center; // Centers the text within the element
+  font-size: 0.7em;
+  z-index: 10; // Ensure it's above other elements
+  width: auto; // Allow natural width based on content
 }
