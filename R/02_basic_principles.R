@@ -70,7 +70,7 @@ for (i in 1:10) {
   x[i] <- i
   y[i] <- i
 
-  # Force a print of the current memory location after each assignment
+  # Print current memory location after each assignment
   cat(
     "After iteration ",
     i,

@@ -35,7 +35,7 @@ summary(compare_cpp_function, unit = "relative")
 
 # 2 External C++ file ---------------------------------------------------------
 # Source the external C++ file with our Fibonacci implementation
-sourceCpp("R/live_demo/fibonacci.cpp")
+sourceCpp("R/fibonacci.cpp")
 
 # Test the external function
 fibonacci_ext(30)

@@ -29,7 +29,6 @@ compare_read <- microbenchmark(
 
   # arrow
   read_csv_arrow = arrow::read_csv_arrow(file_path_csv),
-
   times = 10
 )
 
@@ -55,7 +54,6 @@ compare_read_binary <- microbenchmark(
 
   # fst format (efficient R only format)
   read_fst = fst::read_fst(file_path_fst),
-
   times = 10
 )
 
@@ -81,7 +79,6 @@ compare_write <- microbenchmark::microbenchmark(
   # write binary formats
   write_parquet = arrow::write_parquet(df, "data/df.parquet"),
   write_fst = fst::write_fst(df, "data/df.fst"),
-
   times = 10
 )
 
@@ -114,8 +111,6 @@ summarize_collapse <- function() {
 
 # 4. The Arrow way
 summarize_arrow <- function() {
-  # Convert to Arrow Table
-
   # Perform aggregation using Arrow's compute engine
   ghg_ems_parquet |>
     group_by(Country) |>
@@ -134,7 +129,7 @@ compare_summarize <- microbenchmark(
 
 summary(compare_summarize, unit = "relative")
 
-# A bigger example
+# A bigger example ------------------------------------------------
 
 # Create a larger dataset (10 million rows)
 set.seed(123)
