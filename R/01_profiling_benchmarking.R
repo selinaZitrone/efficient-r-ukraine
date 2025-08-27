@@ -59,10 +59,6 @@ center_data_fast <- function() {
 }
 
 # Option 1: Quick benchmarking -------------------------------------------------
-
-system.time(center_data_slow())
-system.time(center_data_fast())
-
 library(tictoc)
 
 tic()
