@@ -5,11 +5,15 @@
 .DS_Store
 .quarto
 
+# for slide rendering
 archive/
 *_cache/
 *_files/
 slides.html
 img/images.pptx
+_extensions/
+
+
 
 # dummy files created
 df.*
