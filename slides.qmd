@@ -1179,6 +1179,8 @@ toc()
 
 The **parallel** version
 
+:::{.fragment}
+
 ```{r}
 #| label: furrr-slow-sqrt
 library(furrr)
@@ -1188,6 +1190,8 @@ tic()
 z <- future_map(x, slow_sqrt)
 toc()
 ```
+
+:::
 
 :::
 
@@ -1337,7 +1341,7 @@ summary(compare_rcpp, unit = "relative")
 ## Thank you for your attention {background-image="img/grassland5.JPG"}
 Questions?
 
-# Appendix
+# Appendix {.inverse}
 
 ## Cache function results
 
