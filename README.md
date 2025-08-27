@@ -90,6 +90,7 @@ install.packages("Rcpp")
 
 - [Efficient R Programming](https://csgillespie.github.io/efficientR/) by Colin Gillespie and Robin Lovelace
 - [Advanced R](https://adv-r.hadley.nz/) by Hadley Wickham
+- [Scaling Up with R and Arrow](https://arrowrbook.com/) by Crane et al.
 
 ### R Packages for Efficient Programming
 
