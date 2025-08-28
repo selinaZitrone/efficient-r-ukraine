@@ -494,7 +494,6 @@ f2 <- function() {
     x[i] <- i
   }
 }
-
 ```
 
 :::
@@ -759,7 +758,6 @@ compare_read_binary <- microbenchmark(
 
   # fst format (efficient R only format)
   read_fst = fst::read_fst(file_path_fst),
-
   times = 10
 )
 
@@ -1097,10 +1095,9 @@ First, change into a `foreach`
 #| label: foreach-slow-sqrt
 #| eval: false
 library(foreach)
-z <- foreach(i = 1:10) %do%
-  {
-    slow_sqrt(i)
-  }
+z <- foreach(i = 1:10) %do% {
+  slow_sqrt(i)
+}
 ```
 
 ## Parallel for loops
@@ -1118,10 +1115,9 @@ The **sequential** version
 library(foreach)
 
 tic()
-z <- foreach(i = 1:10) %do%
-  {
-    slow_sqrt(i)
-  }
+z <- foreach(i = 1:10) %do% {
+  slow_sqrt(i)
+}
 toc()
 ```
 
@@ -1138,10 +1134,9 @@ The **parallel** version
 library(doFuture)
 
 tic()
-z <- foreach(i = 1:10) %dofuture%
-  {
-    slow_sqrt(i)
-  }
+z <- foreach(i = 1:10) %dofuture% {
+  slow_sqrt(i)
+}
 toc()
 ```
 
@@ -1320,23 +1315,38 @@ summary(compare_rcpp, unit = "relative")
 
 # Summary {.inverse}
 
-## Efficient R code and optimization
+## How to optimize
 
-- Find your code bottlenecks and optimize those
+:::{.nonincremental}
+
+:::{.fragment}
+
+1. **Identify the bottlenecks** with profiling and benchmarking
   - Use `profvis`, `microbenchmark`, and `tictoc`
+
+:::
+
+:::{.fragment}
+
+2. **Optimize the bottlenecks**
+  - Vectorize your code, write smart for loops, cache variables
+  - Use efficient data formats and packages
+  - Parallelize your code with the `futureverse`
+  - If necessary: Rewrite slow functions in C++
+  
+:::  
+
+:::
+
+## Take home message
+
+Making R code more efficient is (often) not that hard!
+
+- Many packages make it easy to speed up your code without much effort and rewriting
 - Many quick wins, e.g.
   - Use `fread` instead of `read.csv`
   - Use `future_apply/future_map` instead of `apply/map`
   - Replace some tidyverse/base R functions with collapse functions
-- If necessary: Advanced optimization techniques (e.g. C++ integration)
-- For memory bottlenecks: 
-  - Consider data bases together with `dbplyr`
-  - Use `arrow` to work on larger-than-RAM datasets
-
-## Summary
-
-![](img/pyramid_text.png){width=90%}
-
 
 ## Thank you for your attention {background-image="img/grassland5.JPG"}
 Questions?
